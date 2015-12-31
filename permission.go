@@ -32,6 +32,34 @@ func hasSameElem(vs1 []string, vs2 []string) bool {
 	return false
 }
 
+// Concat concat two permissions into a new Permission
+func (current *Permission) Concat(permission *Permission) *Permission {
+	var result = Permission{
+		Role:       role,
+		allowRoles: map[PermissionMode][]string{},
+		denyRoles:  map[PermissionMode][]string{},
+	}
+
+	var appendRoles = func(p *Permission) {
+		if p != nil {
+			result.Role = p.Role
+
+			for mode, roles := range p.denyRoles {
+				result.denyRoles[mode] = append(result.denyRoles[mode], roles...)
+			}
+
+			for mode, roles := range p.allowRoles {
+				result.allowRoles[mode] = append(result.allowRoles[mode], roles...)
+			}
+		}
+	}
+
+	appendRoles(permission)
+	appendRoles(current)
+	return &result
+}
+
+// HasPermission check roles has permission for mode or not
 func (permission *Permission) HasPermission(mode PermissionMode, roles ...string) bool {
 	if len(permission.denyRoles) != 0 {
 		if denyRoles := permission.denyRoles[mode]; denyRoles != nil {
