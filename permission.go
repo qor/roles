@@ -10,9 +10,11 @@ const (
 	Create
 	Delete
 	CRUD
+
+	// for anyone
+	Anyone = "*"
 )
 
-var All = map[string]PermissionMode{"Read": Read, "Update": Update, "Create": Create, "Delete": Delete, "CRUD": CRUD}
 var ErrPermissionDenied = errors.New("permission denied")
 
 type Permission struct {
@@ -21,10 +23,14 @@ type Permission struct {
 	denyRoles  map[PermissionMode][]string
 }
 
-func hasSameElem(vs1 []string, vs2 []string) bool {
-	for _, v1 := range vs1 {
-		for _, v2 := range vs2 {
-			if v1 == v2 {
+func includeRoles(roles []string, values []string) bool {
+	for _, role := range roles {
+		if role == Anyone {
+			return true
+		}
+
+		for _, value := range values {
+			if value == role {
 				return true
 			}
 		}
@@ -63,7 +69,7 @@ func (current *Permission) Concat(permission *Permission) *Permission {
 func (permission *Permission) HasPermission(mode PermissionMode, roles ...string) bool {
 	if len(permission.denyRoles) != 0 {
 		if denyRoles := permission.denyRoles[mode]; denyRoles != nil {
-			if hasSameElem(denyRoles, roles) {
+			if includeRoles(denyRoles, roles) {
 				return false
 			}
 		}
@@ -73,7 +79,7 @@ func (permission *Permission) HasPermission(mode PermissionMode, roles ...string
 		return true
 	} else {
 		if allowRoles := permission.allowRoles[mode]; allowRoles != nil {
-			if hasSameElem(allowRoles, roles) {
+			if includeRoles(allowRoles, roles) {
 				return true
 			}
 		}

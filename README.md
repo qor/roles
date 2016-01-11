@@ -35,6 +35,9 @@ func main() {
   // Using Chain
   permission := roles.Allow(roles.CRUD, "admin").Allow(roles.Read, "visitor")
   permission := roles.Allow(roles.CRUD, "admin").Deny(roles.Update, "user")
+
+  // roles defined a constant `Anyone` means for anyone
+  permission := roles.Deny(roles.Update, roles.Anyone) // no one has update permission
 }
 ```
 

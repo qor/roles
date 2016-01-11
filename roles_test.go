@@ -1,42 +1,68 @@
-package roles
+package roles_test
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/qor/roles"
+)
 
 func TestAllow(t *testing.T) {
-	permission := Allow(Read, "api")
+	permission := roles.Allow(roles.Read, "api")
 
-	if !permission.HasPermission(Read, "api") {
+	if !permission.HasPermission(roles.Read, "api") {
 		t.Errorf("API should has permission to Read")
 	}
 
-	if permission.HasPermission(Update, "api") {
+	if permission.HasPermission(roles.Update, "api") {
+		t.Errorf("API should has no permission to Update")
+	}
+}
+
+func TestDeny(t *testing.T) {
+	permission := roles.Deny(roles.Create, "api")
+
+	if !permission.HasPermission(roles.Read, "api") {
+		t.Errorf("API should has permission to Read")
+	}
+
+	if !permission.HasPermission(roles.Update, "api") {
+		t.Errorf("API should has permission to Update")
+	}
+
+	if permission.HasPermission(roles.Create, "api") {
 		t.Errorf("API should has no permission to Update")
 	}
 }
 
 func TestCRUD(t *testing.T) {
-	permission := Allow(CRUD, "admin")
-	if !permission.HasPermission(Read, "admin") {
+	permission := roles.Allow(roles.CRUD, "admin")
+	if !permission.HasPermission(roles.Read, "admin") {
 		t.Errorf("Admin should has permission to Read")
 	}
 
-	if !permission.HasPermission(Update, "admin") {
+	if !permission.HasPermission(roles.Update, "admin") {
 		t.Errorf("Admin should has permission to Update")
 	}
 }
 
-func TestDeny(t *testing.T) {
-	permission := Deny(Create, "api")
+func TestAll(t *testing.T) {
+	permission := roles.Allow(roles.Update, roles.Anyone)
 
-	if !permission.HasPermission(Read, "api") {
-		t.Errorf("API should has permission to Read")
+	if permission.HasPermission(roles.Read, "api") {
+		t.Errorf("API should has no permission to Read")
 	}
 
-	if !permission.HasPermission(Update, "api") {
+	if !permission.HasPermission(roles.Update, "api") {
 		t.Errorf("API should has permission to Update")
 	}
 
-	if permission.HasPermission(Create, "api") {
+	permission2 := roles.Deny(roles.Update, roles.Anyone)
+
+	if !permission2.HasPermission(roles.Read, "api") {
+		t.Errorf("API should has permission to Read")
+	}
+
+	if permission2.HasPermission(roles.Update, "api") {
 		t.Errorf("API should has no permission to Update")
 	}
 }
