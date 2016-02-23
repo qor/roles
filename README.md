@@ -2,23 +2,21 @@
 
 Roles is an authorization library for Golang
 
-When we building web applications, we found we alwalys check permission with informations from HTTP Request, like Remote IP, Header, Session or using Current User, so to save our life, we extracted the Roles package when we building [QOR](http://getqor.com)
-
 ## Usage
 
 ### Permission Modes
 
-Roles has defined [5 permission modes](https://github.com/qor/roles/blob/master/permission.go#L7-L13):
+Roles has defined [5 permission modes](https://github.com/qor/roles/blob/master/permission.go#L8-L12):
 
 ```
 roles.Read
 roles.Update
 roles.Create
 roles.Delete
-role.CRUD    // CRUD means Read, Update, Create, Delete
+roles.CRUD   // CRUD means Read, Update, Create, Delete
 ```
 
-You define permissions with those modes or create your own mode
+You could use those modes to [define permission](#define-permission) or create your own mode
 
 ### Define Permission
 
@@ -27,16 +25,16 @@ import "github.com/qor/roles"
 
 func main() {
   // Allow Permission
-  permission := roles.Allow(roles.Read, "admin") // `admin` is a role name
+  permission := roles.Allow(roles.Read, "admin") // `admin` has `Read` permission, `admin` is a role name
 
   // Deny Permission
-  permission := roles.Deny(roles.Create, "user")
+  permission := roles.Deny(roles.Create, "user") // `user` has no `Create` permission
 
   // Using Chain
-  permission := roles.Allow(roles.CRUD, "admin").Allow(roles.Read, "visitor")
-  permission := roles.Allow(roles.CRUD, "admin").Deny(roles.Update, "user")
+  permission := roles.Allow(roles.CRUD, "admin").Allow(roles.Read, "visitor") // `admin` has `CRUD` permissions, `visitor` only has `Read` permission
+  permission := roles.Allow(roles.CRUD, "admin").Deny(roles.Update, "user") // `admin` has `CRUD` permissions, `user` doesn't has `Update` permission
 
-  // roles defined a constant `Anyone` means for anyone
+  // roles `Anyone` means for anyone
   permission := roles.Deny(roles.Update, roles.Anyone) // no one has update permission
 }
 ```
@@ -73,16 +71,16 @@ func main() {
 }
 ```
 
-When check permission, we need to get current roles then check if he has permission,
-it might be boring, especially you have defined many roles with many conditions,
-So Roles provides some help methods to let you define and get roles easier
-
 ### Register Roles
+
+When check permission, you need to know current user's roles first, it might be boring, especially you have defined many roles based on lots of conditions,
+So Roles provides some help methods to make it easier
 
 ```go
 import "github.com/qor/roles"
 
 func main() {
+  // Register roles based on some conditions
   roles.Register("admin", func(req *http.Request, currentUser interface{}) bool {
       return req.RemoteAddr == "127.0.0.1" || (currentUser != nil && currentUser.(*User).Role == "admin")
   })
@@ -95,8 +93,8 @@ func main() {
     return currentUser == nil
   })
 
-  // Get Matched Roles
-  matchedRoles := roles.MatchedRoles(httpRequest, currentUser) // []string{"user", "admin"}
+  // Get roles from a user
+  matchedRoles := roles.MatchedRoles(httpRequest, user) // []string{"user", "admin"}
 
   // Check if role `user` or `admin` has Read permission
   permission.HasPermission(roles.Read, matchedRoles...)
