@@ -21,7 +21,7 @@ const (
 // ErrPermissionDenied no permission error
 var ErrPermissionDenied = errors.New("permission denied")
 
-// NewPermission initalize a new permission for default role
+// NewPermission initialize a new permission for default role
 func NewPermission() *Permission {
 	return role.newPermission()
 }
