@@ -1,6 +1,6 @@
 # Roles
 
-Roles is an authorization library for Golang
+Roles is an authorization library for Golang.
 
 [![GoDoc](https://godoc.org/github.com/qor/roles?status.svg)](https://godoc.org/github.com/qor/roles)
 
@@ -8,7 +8,7 @@ Roles is an authorization library for Golang
 
 ### Permission Modes
 
-Roles has defined [5 permission modes](https://github.com/qor/roles/blob/master/permission.go#L8-L12):
+Permission Modes are really the 'roles' in Roles. Roles has [5 default permission modes](https://github.com/qor/roles/blob/master/permission.go#L8-L12):
 
 ```
 roles.Read
@@ -18,7 +18,7 @@ roles.Delete
 roles.CRUD   // CRUD means Read, Update, Create, Delete
 ```
 
-You could use those modes to [define permission](#define-permission) or create your own mode
+You can use those Permission Modes, or create your own, to [define permission](#define-permission).
 
 ### Define Permission
 
@@ -75,8 +75,7 @@ func main() {
 
 ### Register Roles
 
-When check permission, you need to know current user's roles first, it might be boring, especially you have defined many roles based on lots of conditions,
-So Roles provides some help methods to make it easier
+When checking permissions, you will need to know current User's roles first. This could quickly get out of hand if you have defined many roles based on lots of conditions - so Roles provides some helper methods to make it easier:
 
 ```go
 import "github.com/qor/roles"
