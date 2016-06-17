@@ -16,6 +16,14 @@ func TestAllow(t *testing.T) {
 	if permission.HasPermission(roles.Update, "api") {
 		t.Errorf("API should has no permission to Update")
 	}
+
+	if permission.HasPermission(roles.Read, "admin") {
+		t.Errorf("admin should has no permission to Read")
+	}
+
+	if permission.HasPermission(roles.Update, "admin") {
+		t.Errorf("admin should has no permission to Update")
+	}
 }
 
 func TestDeny(t *testing.T) {
@@ -31,6 +39,14 @@ func TestDeny(t *testing.T) {
 
 	if permission.HasPermission(roles.Create, "api") {
 		t.Errorf("API should has no permission to Update")
+	}
+
+	if !permission.HasPermission(roles.Read, "admin") {
+		t.Errorf("admin should has permission to Read")
+	}
+
+	if !permission.HasPermission(roles.Create, "admin") {
+		t.Errorf("admin should has permission to Update")
 	}
 }
 
