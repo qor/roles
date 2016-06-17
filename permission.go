@@ -3,19 +3,19 @@ package roles
 import "errors"
 
 // PermissionMode permission mode
-type PermissionMode uint32
+type PermissionMode string
 
 const (
 	// Create predefined permission mode, create permission
-	Create PermissionMode = 1 << (32 - 1 - iota)
+	Create PermissionMode = "create"
 	// Read predefined permission mode, read permission
-	Read
+	Read PermissionMode = "read"
 	// Update predefined permission mode, update permission
-	Update
+	Update PermissionMode = "update"
 	// Delete predefined permission mode, deleted permission
-	Delete
+	Delete PermissionMode = "delete"
 	// CRUD predefined permission mode, create+read+update+delete permission
-	CRUD
+	CRUD PermissionMode = "crud"
 )
 
 // ErrPermissionDenied no permission error
