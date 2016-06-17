@@ -66,3 +66,26 @@ func TestAll(t *testing.T) {
 		t.Errorf("API should has no permission to Update")
 	}
 }
+
+func TestCustomizePermission(t *testing.T) {
+	var customized roles.PermissionMode = "customized"
+	permission := roles.Allow(customized, "admin")
+
+	if !permission.HasPermission(customized, "admin") {
+		t.Errorf("Admin should has customized permission")
+	}
+
+	if permission.HasPermission(roles.Read, "admin") {
+		t.Errorf("Admin should has no permission to Read")
+	}
+
+	permission2 := roles.Deny(customized, "admin")
+
+	if permission2.HasPermission(customized, "admin") {
+		t.Errorf("Admin should has customized permission")
+	}
+
+	if !permission2.HasPermission(roles.Read, "admin") {
+		t.Errorf("Admin should has no permission to Read")
+	}
+}
