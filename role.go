@@ -90,3 +90,21 @@ func (role *Role) Get(name string) (func(req *http.Request, currentUser interfac
 	fc, ok := role.definitions[name]
 	return fc, ok
 }
+
+// Remove role definition
+func (role *Role) Remove(name string) {
+	delete(role.definitions, name)
+}
+
+func Remove(name string) {
+	role.Remove(name)
+}
+
+// Reset role definitions
+func (role *Role) Reset() {
+	role.definitions = map[string]func(req *http.Request, currentUser interface{}) bool{}
+}
+
+func Reset() {
+	role.Reset()
+}
