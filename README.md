@@ -83,15 +83,15 @@ import "github.com/qor/roles"
 func main() {
   // Register roles based on some conditions
   roles.Register("admin", func(req *http.Request, currentUser interface{}) bool {
-      return req.RemoteAddr == "127.0.0.1" || (currentUser != nil && currentUser.(*User).Role == "admin")
+      return req.RemoteAddr == "127.0.0.1" || (currentUser.(*User) != nil && currentUser.(*User).Role == "admin")
   })
 
   roles.Register("user", func(req *http.Request, currentUser interface{}) bool {
-    return currentUser != nil
+    return currentUser.(*User) != nil
   })
 
   roles.Register("visitor", func(req *http.Request, currentUser interface{}) bool {
-    return currentUser == nil
+    return currentUser.(*User) == nil
   })
 
   // Get roles from a user
