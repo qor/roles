@@ -59,6 +59,14 @@ func TestCRUD(t *testing.T) {
 	if !permission.HasPermission(roles.Update, "admin") {
 		t.Errorf("Admin should has permission to Update")
 	}
+
+	if permission.HasPermission(roles.Read, "api") {
+		t.Errorf("API should has no permission to Read")
+	}
+
+	if permission.HasPermission(roles.Update, "api") {
+		t.Errorf("API should has no permission to Update")
+	}
 }
 
 func TestAll(t *testing.T) {
