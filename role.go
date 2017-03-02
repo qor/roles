@@ -40,7 +40,7 @@ func (role *Role) Register(name string, fc func(req *http.Request, currentUser i
 	role.definitions[name] = fc
 }
 
-func (role *Role) newPermission() *Permission {
+func (role *Role) NewPermission() *Permission {
 	return &Permission{
 		Role:         role,
 		AllowedRoles: map[PermissionMode][]string{},
@@ -55,7 +55,7 @@ func Allow(mode PermissionMode, roles ...string) *Permission {
 
 // Allow allows permission mode for roles
 func (role *Role) Allow(mode PermissionMode, roles ...string) *Permission {
-	return role.newPermission().Allow(mode, roles...)
+	return role.NewPermission().Allow(mode, roles...)
 }
 
 // Deny deny permission mode for roles
@@ -65,7 +65,7 @@ func Deny(mode PermissionMode, roles ...string) *Permission {
 
 // Deny deny permission mode for roles
 func (role *Role) Deny(mode PermissionMode, roles ...string) *Permission {
-	return role.newPermission().Deny(mode, roles...)
+	return role.NewPermission().Deny(mode, roles...)
 }
 
 // MatchedRoles return defined roles from user
@@ -89,4 +89,22 @@ func (role *Role) MatchedRoles(req *http.Request, currentUser interface{}) (role
 func (role *Role) Get(name string) (func(req *http.Request, currentUser interface{}) bool, bool) {
 	fc, ok := role.definitions[name]
 	return fc, ok
+}
+
+// Remove role definition
+func (role *Role) Remove(name string) {
+	delete(role.definitions, name)
+}
+
+func Remove(name string) {
+	role.Remove(name)
+}
+
+// Reset role definitions
+func (role *Role) Reset() {
+	role.definitions = map[string]func(req *http.Request, currentUser interface{}) bool{}
+}
+
+func Reset() {
+	role.Reset()
 }

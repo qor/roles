@@ -23,7 +23,7 @@ var ErrPermissionDenied = errors.New("permission denied")
 
 // NewPermission initialize a new permission for default role
 func NewPermission() *Permission {
-	return role.newPermission()
+	return role.NewPermission()
 }
 
 // Permission a struct contains permission definitions
