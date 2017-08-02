@@ -10,8 +10,6 @@ const (
 	Anyone = "*"
 )
 
-var role = &Role{}
-
 // New initialize a new `Role`
 func New() *Role {
 	return &Role{}
@@ -20,11 +18,6 @@ func New() *Role {
 // Role is a struct contains all roles definitions
 type Role struct {
 	definitions map[string]func(request *http.Request, user interface{}) bool
-}
-
-// Register register role with conditions
-func Register(name string, fc func(request *http.Request, user interface{}) bool) {
-	role.Register(name, fc)
 }
 
 // Register register role with conditions
@@ -40,6 +33,7 @@ func (role *Role) Register(name string, fc func(req *http.Request, currentUser i
 	role.definitions[name] = fc
 }
 
+// NewPermission initialize permission
 func (role *Role) NewPermission() *Permission {
 	return &Permission{
 		Role:         role,
@@ -49,40 +43,13 @@ func (role *Role) NewPermission() *Permission {
 }
 
 // Allow allows permission mode for roles
-func Allow(mode PermissionMode, roles ...string) *Permission {
-	return role.Allow(mode, roles...)
-}
-
-// Allow allows permission mode for roles
 func (role *Role) Allow(mode PermissionMode, roles ...string) *Permission {
 	return role.NewPermission().Allow(mode, roles...)
 }
 
 // Deny deny permission mode for roles
-func Deny(mode PermissionMode, roles ...string) *Permission {
-	return role.Deny(mode, roles...)
-}
-
-// Deny deny permission mode for roles
 func (role *Role) Deny(mode PermissionMode, roles ...string) *Permission {
 	return role.NewPermission().Deny(mode, roles...)
-}
-
-// MatchedRoles return defined roles from user
-func MatchedRoles(req *http.Request, user interface{}) []string {
-	return role.MatchedRoles(req, user)
-}
-
-// MatchedRoles return defined roles from user
-func (role *Role) MatchedRoles(req *http.Request, currentUser interface{}) (roles []string) {
-	if definitions := role.definitions; definitions != nil {
-		for name, definition := range definitions {
-			if definition(req, currentUser) {
-				roles = append(roles, name)
-			}
-		}
-	}
-	return
 }
 
 // Get role defination
@@ -96,15 +63,19 @@ func (role *Role) Remove(name string) {
 	delete(role.definitions, name)
 }
 
-func Remove(name string) {
-	role.Remove(name)
-}
-
 // Reset role definitions
 func (role *Role) Reset() {
 	role.definitions = map[string]func(req *http.Request, currentUser interface{}) bool{}
 }
 
-func Reset() {
-	role.Reset()
+// MatchedRoles return defined roles from user
+func (role *Role) MatchedRoles(req *http.Request, currentUser interface{}) (roles []string) {
+	if definitions := role.definitions; definitions != nil {
+		for name, definition := range definitions {
+			if definition(req, currentUser) {
+				roles = append(roles, name)
+			}
+		}
+	}
+	return
 }
