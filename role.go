@@ -21,9 +21,9 @@ type Role struct {
 }
 
 // Register register role with conditions
-func (role *Role) Register(name string, fc func(req *http.Request, currentUser interface{}) bool) {
+func (role *Role) Register(name string, fc func(req *http.Request, user interface{}) bool) {
 	if role.definitions == nil {
-		role.definitions = map[string]func(req *http.Request, currentUser interface{}) bool{}
+		role.definitions = map[string]func(req *http.Request, user interface{}) bool{}
 	}
 
 	definition := role.definitions[name]
@@ -53,7 +53,7 @@ func (role *Role) Deny(mode PermissionMode, roles ...string) *Permission {
 }
 
 // Get role defination
-func (role *Role) Get(name string) (func(req *http.Request, currentUser interface{}) bool, bool) {
+func (role *Role) Get(name string) (func(req *http.Request, user interface{}) bool, bool) {
 	fc, ok := role.definitions[name]
 	return fc, ok
 }
@@ -65,17 +65,31 @@ func (role *Role) Remove(name string) {
 
 // Reset role definitions
 func (role *Role) Reset() {
-	role.definitions = map[string]func(req *http.Request, currentUser interface{}) bool{}
+	role.definitions = map[string]func(req *http.Request, user interface{}) bool{}
 }
 
 // MatchedRoles return defined roles from user
-func (role *Role) MatchedRoles(req *http.Request, currentUser interface{}) (roles []string) {
+func (role *Role) MatchedRoles(req *http.Request, user interface{}) (roles []string) {
 	if definitions := role.definitions; definitions != nil {
 		for name, definition := range definitions {
-			if definition(req, currentUser) {
+			if definition(req, user) {
 				roles = append(roles, name)
 			}
 		}
 	}
 	return
+}
+
+// HasRole check if current user has role
+func (role *Role) HasRole(req *http.Request, user interface{}, roles ...string) bool {
+	if definitions := role.definitions; definitions != nil {
+		for _, name := range roles {
+			if definition, ok := definitions[name]; ok {
+				if definition(req, user) {
+					return true
+				}
+			}
+		}
+	}
+	return false
 }

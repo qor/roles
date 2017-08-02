@@ -19,13 +19,8 @@ func Deny(mode PermissionMode, roles ...string) *Permission {
 	return role.Deny(mode, roles...)
 }
 
-// MatchedRoles return defined roles from user
-func MatchedRoles(req *http.Request, user interface{}) []string {
-	return role.MatchedRoles(req, user)
-}
-
 // Get role defination
-func Get(name string) (func(req *http.Request, currentUser interface{}) bool, bool) {
+func Get(name string) (func(req *http.Request, user interface{}) bool, bool) {
 	return role.Get(name)
 }
 
@@ -37,4 +32,14 @@ func Remove(name string) {
 // Reset role definitions from global role instance
 func Reset() {
 	role.Reset()
+}
+
+// MatchedRoles return defined roles from user
+func MatchedRoles(req *http.Request, user interface{}) []string {
+	return role.MatchedRoles(req, user)
+}
+
+// HasRole check if current user has role
+func HasRole(req *http.Request, user interface{}, roles ...string) bool {
+	return role.HasRole(req, user)
 }
