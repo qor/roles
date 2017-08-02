@@ -6,7 +6,7 @@ import "net/http"
 var Global = &Role{}
 
 // Register register role with conditions
-func Register(name string, fc func(request *http.Request, user interface{}) bool) {
+func Register(name string, fc Checker) {
 	Global.Register(name, fc)
 }
 
@@ -21,7 +21,7 @@ func Deny(mode PermissionMode, roles ...string) *Permission {
 }
 
 // Get role defination
-func Get(name string) (func(req *http.Request, user interface{}) bool, bool) {
+func Get(name string) (Checker, bool) {
 	return Global.Get(name)
 }
 

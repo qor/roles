@@ -10,6 +10,9 @@ const (
 	Anyone = "*"
 )
 
+// Checker check role match or not
+type Checker func(req *http.Request, user interface{}) bool
+
 // New initialize a new `Role`
 func New() *Role {
 	return &Role{}
@@ -17,13 +20,13 @@ func New() *Role {
 
 // Role is a struct contains all roles definitions
 type Role struct {
-	definitions map[string]func(request *http.Request, user interface{}) bool
+	definitions map[string]Checker
 }
 
 // Register register role with conditions
-func (role *Role) Register(name string, fc func(req *http.Request, user interface{}) bool) {
+func (role *Role) Register(name string, fc Checker) {
 	if role.definitions == nil {
-		role.definitions = map[string]func(req *http.Request, user interface{}) bool{}
+		role.definitions = map[string]Checker{}
 	}
 
 	definition := role.definitions[name]
@@ -53,7 +56,7 @@ func (role *Role) Deny(mode PermissionMode, roles ...string) *Permission {
 }
 
 // Get role defination
-func (role *Role) Get(name string) (func(req *http.Request, user interface{}) bool, bool) {
+func (role *Role) Get(name string) (Checker, bool) {
 	fc, ok := role.definitions[name]
 	return fc, ok
 }
@@ -65,7 +68,7 @@ func (role *Role) Remove(name string) {
 
 // Reset role definitions
 func (role *Role) Reset() {
-	role.definitions = map[string]func(req *http.Request, user interface{}) bool{}
+	role.definitions = map[string]Checker{}
 }
 
 // MatchedRoles return defined roles from user
