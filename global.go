@@ -24,6 +24,11 @@ func MatchedRoles(req *http.Request, user interface{}) []string {
 	return role.MatchedRoles(req, user)
 }
 
+// Get role defination
+func Get(name string) (func(req *http.Request, currentUser interface{}) bool, bool) {
+	return role.Get(name)
+}
+
 // Remove role definition from global role instance
 func Remove(name string) {
 	role.Remove(name)
