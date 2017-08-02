@@ -44,3 +44,8 @@ func MatchedRoles(req *http.Request, user interface{}) []string {
 func HasRole(req *http.Request, user interface{}, roles ...string) bool {
 	return Global.HasRole(req, user)
 }
+
+// NewPermission initialize a new permission for default role
+func NewPermission() *Permission {
+	return Global.NewPermission()
+}

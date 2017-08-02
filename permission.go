@@ -21,11 +21,6 @@ const (
 // ErrPermissionDenied no permission error
 var ErrPermissionDenied = errors.New("permission denied")
 
-// NewPermission initialize a new permission for default role
-func NewPermission() *Permission {
-	return role.NewPermission()
-}
-
 // Permission a struct contains permission definitions
 type Permission struct {
 	Role         *Role
@@ -51,7 +46,7 @@ func includeRoles(roles []string, values []string) bool {
 // Concat concat two permissions into a new one
 func (permission *Permission) Concat(newPermission *Permission) *Permission {
 	var result = Permission{
-		Role:         role,
+		Role:         Global,
 		AllowedRoles: map[PermissionMode][]string{},
 		DeniedRoles:  map[PermissionMode][]string{},
 	}
