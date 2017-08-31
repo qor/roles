@@ -2,8 +2,7 @@ package roles
 
 import (
 	"errors"
-
-	"github.com/qor/qor"
+	"fmt"
 )
 
 // PermissionMode permission mode
@@ -28,7 +27,6 @@ var ErrPermissionDenied = errors.New("permission denied")
 // Permission a struct contains permission definitions
 type Permission struct {
 	Role         *Role
-	rolers       []roler
 	AllowedRoles map[PermissionMode][]string
 	DeniedRoles  map[PermissionMode][]string
 }
@@ -75,30 +73,6 @@ func (permission *Permission) Concat(newPermission *Permission) *Permission {
 	return &result
 }
 
-// HasPermission check roles has permission for mode or not
-func (permission Permission) HasPermission(mode PermissionMode, roles ...string) bool {
-	if len(permission.DeniedRoles) != 0 {
-		if DeniedRoles := permission.DeniedRoles[mode]; DeniedRoles != nil {
-			if includeRoles(DeniedRoles, roles) {
-				return false
-			}
-		}
-	}
-
-	// return true if haven't define allowed roles
-	if len(permission.AllowedRoles) == 0 {
-		return true
-	}
-
-	if AllowedRoles := permission.AllowedRoles[mode]; AllowedRoles != nil {
-		if includeRoles(AllowedRoles, roles) {
-			return true
-		}
-	}
-
-	return false
-}
-
 // Allow allows permission mode for roles
 func (permission *Permission) Allow(mode PermissionMode, roles ...string) *Permission {
 	if mode == CRUD {
@@ -125,7 +99,38 @@ func (permission *Permission) Deny(mode PermissionMode, roles ...string) *Permis
 	return permission
 }
 
-// AddRoler add roler
-func (permission *Permission) AddRoler(roler func(data interface{}, context *qor.Context) []string) {
-	permission.rolers = append(permission.rolers, roler)
+// HasPermission check roles has permission for mode or not
+func (permission Permission) HasPermission(mode PermissionMode, roles ...interface{}) bool {
+	var roleNames []string
+	for _, role := range roles {
+		if r, ok := role.(string); ok {
+			roleNames = append(roleNames, r)
+		} else if roler, ok := role.(Roler); ok {
+			roleNames = append(roleNames, roler.GetRoles()...)
+		} else {
+			fmt.Printf("invalid role %#v\n", role)
+			return false
+		}
+	}
+
+	if len(permission.DeniedRoles) != 0 {
+		if DeniedRoles := permission.DeniedRoles[mode]; DeniedRoles != nil {
+			if includeRoles(DeniedRoles, roleNames) {
+				return false
+			}
+		}
+	}
+
+	// return true if haven't define allowed roles
+	if len(permission.AllowedRoles) == 0 {
+		return true
+	}
+
+	if AllowedRoles := permission.AllowedRoles[mode]; AllowedRoles != nil {
+		if includeRoles(AllowedRoles, roleNames) {
+			return true
+		}
+	}
+
+	return false
 }
