@@ -1,6 +1,10 @@
 package roles
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/qor/qor"
+)
 
 // PermissionMode permission mode
 type PermissionMode string
@@ -24,6 +28,7 @@ var ErrPermissionDenied = errors.New("permission denied")
 // Permission a struct contains permission definitions
 type Permission struct {
 	Role         *Role
+	rolers       []roler
 	AllowedRoles map[PermissionMode][]string
 	DeniedRoles  map[PermissionMode][]string
 }
@@ -118,4 +123,9 @@ func (permission *Permission) Deny(mode PermissionMode, roles ...string) *Permis
 	}
 	permission.DeniedRoles[mode] = append(permission.DeniedRoles[mode], roles...)
 	return permission
+}
+
+// AddRoler add roler
+func (permission *Permission) AddRoler(roler func(data interface{}, context *qor.Context) []string) {
+	permission.rolers = append(permission.rolers, roler)
 }

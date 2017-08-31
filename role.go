@@ -10,7 +10,7 @@ const (
 	Anyone = "*"
 )
 
-// Checker check role match or not
+// Checker check current request match this role or not
 type Checker func(req *http.Request, user interface{}) bool
 
 // New initialize a new `Role`
