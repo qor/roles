@@ -31,7 +31,7 @@ func (role *Role) Register(name string, fc Checker) {
 
 	definition := role.definitions[name]
 	if definition != nil {
-		fmt.Printf("%v already defined, overwrited it!\n", name)
+		fmt.Printf("Role `%v` already defined, overwrited it!\n", name)
 	}
 	role.definitions[name] = fc
 }
