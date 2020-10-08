@@ -3,6 +3,7 @@
 Roles is an [authorization](https://en.wikipedia.org/wiki/Authorization) library for [Golang](http://golang.org/), it also integrates nicely with [QOR Admin](http://github.com/qor/admin).
 
 [![GoDoc](https://godoc.org/github.com/qor/roles?status.svg)](https://godoc.org/github.com/qor/roles)
+[![Build Status](https://travis-ci.com/qor/roles.svg?branch=master)](https://travis-ci.com/qor/roles)
 
 ## Usage
 
